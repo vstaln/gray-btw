@@ -1,13 +1,25 @@
-<p align="center">
-  <img src="assets/gray-logo.svg" alt="gray" width="96">
-</p>
-<h1 align="center">gray-btw</h1>
-<p align="center">Side conversations inside a session — ask without hijacking the main thread.</p>
-<p align="center">
-  <a href="https://github.com/vstaln/gray-btw/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-  <img alt="gray plugin" src="https://img.shields.io/badge/gray-plugin-7aa2f7.svg">
-  <img alt="rust" src="https://img.shields.io/badge/built%20with-rust-orange.svg">
-</p>
+<div align="center">
+  <img alt="gray-btw" src="assets/icon.svg" width="120" height="120" />
+  <h1>gray-btw</h1>
+  <p><strong>Side conversations inside a session, without hijacking the main thread.</strong></p>
+  <p>
+    <a href="https://gray.alignment.id">Website</a> ·
+    <a href="https://gray.alignment.id/plugins/gray-btw">Store</a> ·
+    <a href="https://github.com/vstaln/gray-btw">Source</a> ·
+    <a href="https://github.com/vstaln/gray">gray</a>
+  </p>
+  <p>
+    <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-1c1c20?style=flat-square&labelColor=0a0a0b" /></a>
+    <a href="https://www.rust-lang.org"><img alt="Built with Rust" src="https://img.shields.io/badge/built%20with-rust-1c1c20?style=flat-square&labelColor=0a0a0b&logo=rust&logoColor=d4a373" /></a>
+    <a href="https://gray.alignment.id/plugins/gray-btw"><img alt="gray plugin" src="https://img.shields.io/badge/gray-plugin-1c1c20?style=flat-square&labelColor=0a0a0b&color=7aa2f7" /></a>
+  </p>
+</div>
+
+<br/>
+
+```bash
+gray plugin install gray-btw
+```
 
 Side conversations inside a session. `/btw <text>` asks a question on a
 separate channel via `host/run` instead of hijacking the main thread; the
@@ -40,6 +52,10 @@ failing. Turns are sequential — a non-blocking feel is aspirational.
 gray plugin install ~/grayplugins/gray-btw
 gray plugin capabilities btw --all
 ```
+
+## Tags
+
+`gray` `plugin` `btw` `rust`
 
 ---
 Part of the [gray](https://github.com/vstaln/gray) plugin ecosystem —

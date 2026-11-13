@@ -252,6 +252,7 @@ fn manifest() -> Value {
         "tools": [],
         "description": "a side conversation inside the session",
         "commands": ["/btw"],
+        "command_descriptions": {"/btw": "ask a side question outside the main thread"},
     })
 }
 

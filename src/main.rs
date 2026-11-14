@@ -250,7 +250,7 @@ fn manifest() -> Value {
         "protocol": "1.1",
         "capabilities": ["host.turn"],
         "tools": [],
-        "description": "a",
+        "description": "a side conversation inside the session",
         "commands": ["/btw"],
     })
 }

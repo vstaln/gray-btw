@@ -24,8 +24,7 @@ use serde_json::{Value, json};
 
 type Pending = Arc<Mutex<HashMap<String, mpsc::Sender<Value>>>>;
 const HOST_RUN_TTL: Duration = Duration::from_secs(40);
-const NEED_GRANT: &str =
-    "btw needs the host.turn capability: gray plugin capabilities btw --all";
+const NEED_GRANT: &str = "btw needs the host.turn capability: gray plugin capabilities btw --all";
 
 // ---------- state -------------------------------------------------------------
 
@@ -39,7 +38,13 @@ fn gray_home() -> PathBuf {
 fn sanitize(s: &str) -> String {
     let s: String = s
         .chars()
-        .map(|c| if c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '-') { c } else { '-' })
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '-') {
+                c
+            } else {
+                '-'
+            }
+        })
         .collect();
     if s.is_empty() { "session".into() } else { s }
 }
@@ -80,7 +85,9 @@ fn append_log_in(dir: &Path, sid: &str, q: &str, a: &str) -> Result<(), String> 
 /// The btw thread log: (question, answer) pairs in order.
 fn read_log_in(dir: &Path, sid: &str) -> Vec<(String, String)> {
     let path = dir.join(format!("{}.jsonl", sanitize(sid)));
-    let Ok(raw) = std::fs::read_to_string(path) else { return Vec::new() };
+    let Ok(raw) = std::fs::read_to_string(path) else {
+        return Vec::new();
+    };
     raw.lines()
         .filter_map(|l| serde_json::from_str::<Value>(l).ok())
         .filter_map(|v| {
@@ -168,9 +175,7 @@ fn host_run(sh: &Shared, prompt: &str) -> Result<String, String> {
 fn ask_btw(sh: &Shared, question: &str) -> Result<String, String> {
     host_run(
         sh,
-        &format!(
-            "Side conversation (btw) — answer briefly, no tools unless essential: {question}"
-        ),
+        &format!("Side conversation (btw) — answer briefly, no tools unless essential: {question}"),
     )
 }
 
@@ -191,12 +196,10 @@ fn parse_btw(argv: &[&str], thread_len: usize) -> BtwCmd {
         Some("log") => BtwCmd::Log,
         Some("clear") | Some("reset") | Some("new") => BtwCmd::Clear,
         Some("help") => BtwCmd::Help,
-        Some(first) if argv.len() == 1 => {
-            match first.parse::<usize>() {
-                Ok(n) if n >= 1 && n <= thread_len => BtwCmd::Repeat(n),
-                _ => BtwCmd::Ask(first.to_string()),
-            }
-        }
+        Some(first) if argv.len() == 1 => match first.parse::<usize>() {
+            Ok(n) if n >= 1 && n <= thread_len => BtwCmd::Repeat(n),
+            _ => BtwCmd::Ask(first.to_string()),
+        },
         _ => BtwCmd::Ask(argv.join(" ")),
     }
 }
@@ -214,7 +217,9 @@ fn run_command(sh: &Shared, params: &Value, argv: &[&str]) -> String {
             let p = log_path(&sid);
             match std::fs::remove_file(&p) {
                 Ok(()) => "btw thread cleared".into(),
-                Err(e) if e.kind() == std::io::ErrorKind::NotFound => "no btw thread to clear".into(),
+                Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
+                    "no btw thread to clear".into()
+                }
                 Err(e) => format!("couldn't clear {}: {e}", p.display()),
             }
         }
@@ -301,7 +306,9 @@ fn main() {
         let stdin = std::io::stdin();
         for line in stdin.lock().lines() {
             let Ok(line) = line else { break };
-            let Ok(v) = serde_json::from_str::<Value>(&line) else { continue };
+            let Ok(v) = serde_json::from_str::<Value>(&line) else {
+                continue;
+            };
             if v.get("method").is_none()
                 && let Some(id) = v.get("id").and_then(Value::as_str)
             {
@@ -338,7 +345,9 @@ mod tests {
     }
 
     fn call(sh: &Shared, method: &str, params: Value) -> Value {
-        handle(sh, &json!({ "id": 1, "method": method, "params": params })).0.unwrap()
+        handle(sh, &json!({ "id": 1, "method": method, "params": params }))
+            .0
+            .unwrap()
     }
 
     fn tmp_dir(tag: &str) -> PathBuf {
@@ -364,14 +373,23 @@ mod tests {
         append_log_in(&d, "s1", "why?", "because").unwrap();
         append_log_in(&d, "s1", "and then?", "done").unwrap();
         let t = read_log_in(&d, "s1");
-        assert_eq!(t, vec![("why?".to_string(), "because".to_string()), ("and then?".to_string(), "done".to_string())]);
+        assert_eq!(
+            t,
+            vec![
+                ("why?".to_string(), "because".to_string()),
+                ("and then?".to_string(), "done".to_string())
+            ]
+        );
         assert!(read_log_in(&d, "other").is_empty());
         let _ = std::fs::remove_dir_all(&d);
     }
 
     #[test]
     fn render_numbers_exchanges() {
-        let t = vec![("q1".to_string(), "a1".to_string()), ("q2".to_string(), "a2".to_string())];
+        let t = vec![
+            ("q1".to_string(), "a1".to_string()),
+            ("q2".to_string(), "a2".to_string()),
+        ];
         let r = render_log(&t);
         assert!(r.contains("1. Q: q1") && r.contains("2. Q: q2"), "{r}");
         assert!(render_log(&[]).contains("no btw thread"));
@@ -393,8 +411,17 @@ mod tests {
 
     #[test]
     fn bare_btw_prints_help() {
-        let r = call(&shared(), "command/run", json!({"name":"/btw","argv":[],"session":{"id":"s"}}));
-        assert!(r["result"]["text"].as_str().unwrap().contains("/btw <text>"));
+        let r = call(
+            &shared(),
+            "command/run",
+            json!({"name":"/btw","argv":[],"session":{"id":"s"}}),
+        );
+        assert!(
+            r["result"]["text"]
+                .as_str()
+                .unwrap()
+                .contains("/btw <text>")
+        );
     }
 
     #[test]
